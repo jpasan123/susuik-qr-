@@ -21,6 +21,11 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.pos.ui.theme.*
 
+private val Icons.Filled.PowerSettingsNew: ImageVector
+    get() {
+        TODO("Not yet implemented")
+    }
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PosScreen(
@@ -57,7 +62,7 @@ fun PosScreen(
             actions = {
                 IconButton(onClick = { /* Handle receipt */ }) {
                     Icon(
-                        imageVector = Icons.Default.List, // Using List as placeholder for Receipt
+                        imageVector = Icons.Default.List,
                         contentDescription = "Receipt",
                         tint = POSTextPrimary
                     )
@@ -154,11 +159,6 @@ fun PosScreen(
     }
 }
 
-// Placeholder implementation - you should replace this with your actual Hilt ViewModel provider
-fun hiltViewModel(): PosViewModel {
-    TODO("Not yet implemented")
-}
-
 @Composable
 private fun BottomNavigation() {
     Card(
@@ -177,17 +177,17 @@ private fun BottomNavigation() {
             verticalAlignment = Alignment.CenterVertically
         ) {
             BottomNavItem(
-                icon = Icons.Default.QrCode, // Using QrCode as placeholder for QrCodeScanner
+                icon = Icons.Default.Camera,
                 label = "Scan",
                 isSelected = false
             )
             BottomNavItem(
-                icon = Icons.Default.List, // Using List as placeholder for Receipt
+                icon = Icons.Default.List,
                 label = "KOT",
                 isSelected = false
             )
             BottomNavItem(
-                icon = Icons.Default.LocalOffer,
+                icon = Icons.Default.Star,
                 label = "Coupons",
                 isSelected = false
             )
@@ -197,7 +197,7 @@ private fun BottomNavigation() {
                 isSelected = false
             )
             BottomNavItem(
-                icon = Icons.Default.PointOfSale,
+                icon = Icons.Default.ShoppingCart,
                 label = "POS",
                 isSelected = true
             )
@@ -228,4 +228,9 @@ private fun BottomNavItem(
             fontWeight = if (isSelected) FontWeight.Medium else FontWeight.Normal
         )
     }
+}
+
+// Placeholder implementation
+fun hiltViewModel(): PosViewModel {
+    TODO("Not yet implemented")
 }
