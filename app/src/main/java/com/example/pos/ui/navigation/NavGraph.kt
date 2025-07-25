@@ -1,25 +1,37 @@
 package com.example.pos.ui.navigation
 
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
+import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import androidx.navigation.compose.rememberNavController
+import com.example.pos.ui.pos.PosMainScreen
 import com.example.pos.ui.pos.PosScreen
 
 @Composable
 fun NavGraph(
-    modifier: Modifier = Modifier
+    navController: NavHostController,
+    startDestination: String = "pos_screen"
 ) {
-    val navController = rememberNavController()
-    
     NavHost(
         navController = navController,
-        startDestination = "pos_screen",
-        modifier = modifier
+        startDestination = startDestination
     ) {
         composable("pos_screen") {
-            PosScreen()
+            PosScreen(
+                onStartSession = {
+                    navController.navigate("pos_main_screen") {
+                        launchSingleTop = true
+                    }
+                }
+            )
+        }
+
+        composable("pos_main_screen") {
+            PosMainScreen(
+                onBackClick = {
+                    navController.popBackStack()
+                }
+            )
         }
     }
 }

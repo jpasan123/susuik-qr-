@@ -1,7 +1,7 @@
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
-    kotlin("kapt")
+    kotlin("kapt")  // For Kotlin annotation processing
     id("com.google.dagger.hilt.android")
     id("kotlin-parcelize")
 }
@@ -13,7 +13,7 @@ android {
     defaultConfig {
         applicationId = "com.example.pos"
         minSdk = 24
-        targetSdk = 33
+        targetSdk = 34
         versionCode = 1
         versionName = "1.0"
 
@@ -34,12 +34,12 @@ android {
     }
 
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
+        sourceCompatibility = JavaVersion.VERSION_17  // Updated to Java 17
+        targetCompatibility = JavaVersion.VERSION_17
     }
 
     kotlinOptions {
-        jvmTarget = "1.8"
+        jvmTarget = "17"  // Updated to match Java version
     }
 
     buildFeatures {
@@ -58,30 +58,29 @@ android {
 }
 
 dependencies {
+    // Core Android
     implementation("androidx.core:core-ktx:1.12.0")
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.7.0")
     implementation("androidx.activity:activity-compose:1.8.2")
+
+    // Compose BOM
     implementation(platform("androidx.compose:compose-bom:2024.02.00"))
     implementation("androidx.compose.ui:ui")
     implementation("androidx.compose.ui:ui-graphics")
     implementation("androidx.compose.ui:ui-tooling-preview")
     implementation("androidx.compose.material3:material3")
-
-    // Material Icons Extended
-    implementation("androidx.compose.material:material-icons-extended")
+    implementation("androidx.compose.material:material-icons-extended")  // For all Material icons
 
     // Navigation
     implementation("androidx.navigation:navigation-compose:2.7.6")
 
     // ViewModel
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.7.0")
+    implementation("androidx.lifecycle:lifecycle-runtime-compose:2.7.0")  // Added for better compose support
 
     // Hilt
     implementation("com.google.dagger:hilt-android:2.48.1")
-    implementation("androidx.compose.material3:material3-android:1.3.2")
-    implementation("androidx.camera:camera-core:1.4.2")
-    kapt("com.google.dagger:hilt-compiler:2.48.1")
-    kapt("com.google.dagger:hilt-android-compiler:2.48.1")
+    kapt("com.google.dagger:hilt-android-compiler:2.48.1")  // Removed duplicate kapt
     implementation("androidx.hilt:hilt-navigation-compose:1.1.0")
 
     // Room
@@ -96,7 +95,19 @@ dependencies {
 
     // Coroutines
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.3")  // Added core dependency
 
+    // Image loading
+    implementation("io.coil-kt:coil-compose:2.5.0")
+
+    // QR Code Scanner
+    implementation("com.journeyapps:zxing-android-embedded:4.3.0")
+    implementation("com.google.zxing:core:3.5.1")
+
+    // Camera permission
+    implementation("androidx.activity:activity-compose:1.8.2")
+
+    // Testing
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
@@ -106,6 +117,7 @@ dependencies {
     debugImplementation("androidx.compose.ui:ui-test-manifest")
 }
 
+// Allow references to generated code
 kapt {
     correctErrorTypes = true
 }

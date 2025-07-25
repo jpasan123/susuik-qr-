@@ -2,7 +2,6 @@ package com.example.pos.ui.pos
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
@@ -11,7 +10,6 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
@@ -19,31 +17,29 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.pos.ui.theme.*
-
-private val Icons.Filled.PowerSettingsNew: ImageVector
-    get() {
-        TODO("Not yet implemented")
-    }
+import androidx.hilt.navigation.compose.hiltViewModel
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PosScreen(
+    onStartSession: () -> Unit = {},
     viewModel: PosViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
+    val coroutineScope = rememberCoroutineScope()
 
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(POSBackground)
+            .background(Color(0xFFF5F5F5))
     ) {
         // Top App Bar
         TopAppBar(
             title = {
                 Text(
                     text = "POS",
-                    color = POSTextPrimary,
+                    color = Color.Black,
                     fontWeight = FontWeight.Bold,
                     fontSize = 18.sp,
                     modifier = Modifier.fillMaxWidth(),
@@ -55,16 +51,16 @@ fun PosScreen(
                     Icon(
                         imageVector = Icons.Default.Settings,
                         contentDescription = "Settings",
-                        tint = POSTextPrimary
+                        tint = Color.Black
                     )
                 }
             },
             actions = {
                 IconButton(onClick = { /* Handle receipt */ }) {
                     Icon(
-                        imageVector = Icons.Default.List,
+                        imageVector = Icons.Default.Description,
                         contentDescription = "Receipt",
-                        tint = POSTextPrimary
+                        tint = Color.Black
                     )
                 }
             },
@@ -88,7 +84,7 @@ fun PosScreen(
                 Text(
                     text = "Enter Cash-in Hand Value",
                     fontSize = 16.sp,
-                    color = POSTextPrimary,
+                    color = Color.Black,
                     fontWeight = FontWeight.Medium
                 )
 
@@ -103,44 +99,38 @@ fun PosScreen(
                         placeholder = {
                             Text(
                                 text = "Rs.",
-                                color = POSTextSecondary
+                                color = Color.Gray
                             )
                         },
                         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                         modifier = Modifier.width(200.dp),
                         colors = OutlinedTextFieldDefaults.colors(
-                            focusedBorderColor = POSPrimary,
-                            unfocusedBorderColor = POSBorder,
-                            focusedLabelColor = POSPrimary
+                            focusedBorderColor = Color(0xFF2196F3),
+                            unfocusedBorderColor = Color.Gray,
+                            focusedLabelColor = Color(0xFF2196F3)
                         )
                     )
-
-                    // Power Button
-                    Box(
-                        modifier = Modifier
-                            .size(56.dp)
-                            .clip(CircleShape)
-                            .background(Color(0xFF424242)),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.PowerSettingsNew,
-                            contentDescription = "Power",
-                            tint = Color.White,
-                            modifier = Modifier.size(24.dp)
-                        )
-                    }
                 }
 
                 // Start Session Button
                 Button(
-                    onClick = { viewModel.startSession() },
+                    onClick = {
+                        if (uiState.cashInHand.isNotBlank()) {
+                            coroutineScope.launch {
+                                val cashAmount = uiState.cashInHand.toDoubleOrNull() ?: 0.0
+                                val success = viewModel.startSession(cashAmount)
+                                if (success) {
+                                    onStartSession()
+                                }
+                            }
+                        }
+                    },
                     modifier = Modifier
                         .width(200.dp)
                         .height(48.dp),
                     shape = RoundedCornerShape(8.dp),
                     colors = ButtonDefaults.buttonColors(
-                        containerColor = POSYellow,
+                        containerColor = Color(0xFFF0D923),
                         contentColor = Color.Black
                     ),
                     enabled = uiState.cashInHand.isNotBlank()
@@ -159,6 +149,8 @@ fun PosScreen(
     }
 }
 
+// ... BottomNavigation and BottomNavItem composables remain the same ...
+
 @Composable
 private fun BottomNavigation() {
     Card(
@@ -172,22 +164,22 @@ private fun BottomNavigation() {
         Row(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(horizontal = 16.dp),
+                .padding(horizontal = 16.dp),  // Removed the misplaced onStartSession() call
             horizontalArrangement = Arrangement.SpaceEvenly,
             verticalAlignment = Alignment.CenterVertically
         ) {
             BottomNavItem(
-                icon = Icons.Default.Camera,
+                icon = Icons.Default.QrCode,
                 label = "Scan",
                 isSelected = false
             )
             BottomNavItem(
-                icon = Icons.Default.List,
+                icon = Icons.Default.Description,
                 label = "KOT",
                 isSelected = false
             )
             BottomNavItem(
-                icon = Icons.Default.Star,
+                icon = Icons.Default.LocalOffer,
                 label = "Coupons",
                 isSelected = false
             )
@@ -197,14 +189,13 @@ private fun BottomNavigation() {
                 isSelected = false
             )
             BottomNavItem(
-                icon = Icons.Default.ShoppingCart,
+                icon = Icons.Default.Store,
                 label = "POS",
                 isSelected = true
             )
         }
     }
 }
-
 @Composable
 private fun BottomNavItem(
     icon: ImageVector,
@@ -218,19 +209,14 @@ private fun BottomNavItem(
         Icon(
             imageVector = icon,
             contentDescription = label,
-            tint = if (isSelected) POSPrimary else POSIconGray,
+            tint = if (isSelected) Color(0xFF2196F3) else Color.Gray,
             modifier = Modifier.size(24.dp)
         )
         Text(
             text = label,
             fontSize = 10.sp,
-            color = if (isSelected) POSPrimary else POSIconGray,
+            color = if (isSelected) Color(0xFF2196F3) else Color.Gray,
             fontWeight = if (isSelected) FontWeight.Medium else FontWeight.Normal
         )
     }
-}
-
-// Placeholder implementation
-fun hiltViewModel(): PosViewModel {
-    TODO("Not yet implemented")
 }
