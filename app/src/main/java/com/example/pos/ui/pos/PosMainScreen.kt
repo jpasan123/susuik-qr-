@@ -407,7 +407,7 @@ fun PosMainScreen(
                     if (cartItems.isEmpty()) {
                         // Empty cart
                         Box(
-                            modifier = Modifier.fillMaxSize(),
+                            modifier = Modifier.weight(1f),
                             contentAlignment = Alignment.Center
                         ) {
                             Text(
@@ -420,7 +420,7 @@ fun PosMainScreen(
                         // Cart items
                         LazyColumn(
                             modifier = Modifier.weight(1f),
-                            verticalArrangement = Arrangement.spacedBy(8.dp)
+                            verticalArrangement = Arrangement.spacedBy(4.dp)
                         ) {
                             items(cartItems) { cartItem ->
                                 CartItemRow(
@@ -436,61 +436,61 @@ fun PosMainScreen(
                                 )
                             }
                         }
+                    }
+
+                    // Cart summary - always at bottom
+                    Column(
+                        modifier = Modifier.padding(top = 16.dp)
+                    ) {
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.SpaceBetween
+                        ) {
+                            Text(
+                                text = "Subtotal",
+                                fontSize = 14.sp,
+                                color = Color.Gray
+                            )
+                            Text(
+                                text = "Rs.${String.format("%.2f", totalAmount)}",
+                                fontSize = 14.sp,
+                                fontWeight = FontWeight.Medium
+                            )
+                        }
+
+                        Spacer(modifier = Modifier.height(8.dp))
+
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.SpaceBetween
+                        ) {
+                            Text(
+                                text = "Payable Amount",
+                                fontSize = 14.sp,
+                                color = Color.Gray
+                            )
+                            Text(
+                                text = "Rs.${String.format("%.2f", totalAmount)}",
+                                fontSize = 14.sp,
+                                fontWeight = FontWeight.Medium
+                            )
+                        }
 
                         Spacer(modifier = Modifier.height(16.dp))
 
-                        // Cart summary
-                        Column {
-                            Row(
-                                modifier = Modifier.fillMaxWidth(),
-                                horizontalArrangement = Arrangement.SpaceBetween
-                            ) {
-                                Text(
-                                    text = "Subtotal",
-                                    fontSize = 14.sp,
-                                    color = Color.Gray
-                                )
-                                Text(
-                                    text = "Rs.${String.format("%.2f", totalAmount)}",
-                                    fontSize = 14.sp,
-                                    fontWeight = FontWeight.Medium
-                                )
-                            }
-
-                            Spacer(modifier = Modifier.height(8.dp))
-
-                            Row(
-                                modifier = Modifier.fillMaxWidth(),
-                                horizontalArrangement = Arrangement.SpaceBetween
-                            ) {
-                                Text(
-                                    text = "Payable Amount",
-                                    fontSize = 14.sp,
-                                    color = Color.Gray
-                                )
-                                Text(
-                                    text = "Rs.${String.format("%.2f", totalAmount)}",
-                                    fontSize = 14.sp,
-                                    fontWeight = FontWeight.Medium
-                                )
-                            }
-
-                            Spacer(modifier = Modifier.height(16.dp))
-
-                            Button(
-                                onClick = { },
-                                modifier = Modifier.fillMaxWidth(),
-                                colors = ButtonDefaults.buttonColors(
-                                    containerColor = Color(0xFFF0D923),
-                                    contentColor = Color.Black
-                                ),
-                                shape = RoundedCornerShape(8.dp)
-                            ) {
-                                Text(
-                                    text = "Proceed",
-                                    fontWeight = FontWeight.Medium
-                                )
-                            }
+                        Button(
+                            onClick = { },
+                            modifier = Modifier.fillMaxWidth(),
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = Color(0xFFF0D923),
+                                contentColor = Color.Black
+                            ),
+                            shape = RoundedCornerShape(8.dp)
+                        ) {
+                            Text(
+                                text = "Proceed",
+                                fontWeight = FontWeight.Medium
+                            )
                         }
                     }
                 }
@@ -581,6 +581,7 @@ private fun CartItemRow(
     onVariantChange: (String) -> Unit
 ) {
     Column {
+        // Main cart item row
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -591,7 +592,8 @@ private fun CartItemRow(
         ) {
             Row(
                 verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(8.dp)
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                modifier = Modifier.weight(1f)
             ) {
                 // Expand/Collapse arrow
                 Icon(
@@ -659,22 +661,24 @@ private fun CartItemRow(
                     .fillMaxWidth()
                     .padding(start = 24.dp, end = 8.dp, bottom = 8.dp)
             ) {
-                // Variant dropdown
+                // Variant and Quantity row
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.spacedBy(16.dp),
-                    verticalAlignment = Alignment.CenterVertically
+                    verticalAlignment = Alignment.Top
                 ) {
+                    // Variant dropdown
                     Column(modifier = Modifier.weight(1f)) {
                         Text(
                             text = "Variant",
                             fontSize = 10.sp,
-                            color = Color.Gray
+                            color = Color.Gray,
+                            modifier = Modifier.padding(bottom = 4.dp)
                         )
                         Box(
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .height(32.dp)
+                                .height(36.dp)
                                 .border(1.dp, Color.Gray, RoundedCornerShape(4.dp))
                                 .padding(horizontal = 8.dp),
                             contentAlignment = Alignment.CenterStart
@@ -686,7 +690,8 @@ private fun CartItemRow(
                             ) {
                                 Text(
                                     text = cartItem.variant,
-                                    fontSize = 12.sp
+                                    fontSize = 12.sp,
+                                    color = Color.Black
                                 )
                                 Icon(
                                     imageVector = Icons.Default.ArrowDropDown,
@@ -703,7 +708,8 @@ private fun CartItemRow(
                         Text(
                             text = "Quantity",
                             fontSize = 10.sp,
-                            color = Color.Gray
+                            color = Color.Gray,
+                            modifier = Modifier.padding(bottom = 4.dp)
                         )
                         Row(
                             verticalAlignment = Alignment.CenterVertically,
@@ -712,7 +718,7 @@ private fun CartItemRow(
                             // Decrease button
                             Box(
                                 modifier = Modifier
-                                    .size(32.dp)
+                                    .size(36.dp)
                                     .border(1.dp, Color.Gray, RoundedCornerShape(4.dp))
                                     .clickable { onQuantityChange(cartItem.quantity - 1) },
                                 contentAlignment = Alignment.Center
@@ -729,14 +735,14 @@ private fun CartItemRow(
                                 text = cartItem.quantity.toString(),
                                 fontSize = 14.sp,
                                 fontWeight = FontWeight.Medium,
-                                modifier = Modifier.width(20.dp),
+                                modifier = Modifier.width(24.dp),
                                 textAlign = TextAlign.Center
                             )
 
                             // Increase button
                             Box(
                                 modifier = Modifier
-                                    .size(32.dp)
+                                    .size(36.dp)
                                     .border(1.dp, Color.Gray, RoundedCornerShape(4.dp))
                                     .clickable { onQuantityChange(cartItem.quantity + 1) },
                                 contentAlignment = Alignment.Center
@@ -750,13 +756,13 @@ private fun CartItemRow(
                         }
                     }
                 }
-            }
 
-            // Divider
-            Divider(
-                modifier = Modifier.padding(vertical = 8.dp),
-                color = Color.Gray.copy(alpha = 0.3f)
-            )
+                // Divider
+                Divider(
+                    modifier = Modifier.padding(vertical = 8.dp),
+                    color = Color.Gray.copy(alpha = 0.3f)
+                )
+            }
         }
     }
 }
