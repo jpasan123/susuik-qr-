@@ -10,12 +10,23 @@ import com.example.pos.ui.pos.PosScreen
 @Composable
 fun NavGraph(
     navController: NavHostController,
-    startDestination: String = "pos_screen"
+    startDestination: String = "login"
 ) {
     NavHost(
         navController = navController,
         startDestination = startDestination
     ) {
+        composable("login") {
+            com.example.pos.ui.login.LoginScreen(
+                onLoginSuccess = {
+                    navController.navigate("pos_screen") {
+                        popUpTo("login") { inclusive = true }
+                        launchSingleTop = true
+                    }
+                }
+            )
+        }
+
         composable("pos_screen") {
             PosScreen(
                 onStartSession = {
