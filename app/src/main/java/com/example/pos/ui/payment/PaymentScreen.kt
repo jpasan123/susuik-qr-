@@ -266,30 +266,33 @@ fun PaymentScreen(
                                     color = Color.Black,
                                     modifier = Modifier.padding(bottom = 8.dp)
                                 )
-                                OutlinedTextField(
-                                    value = enteredAmount,
-                                    onValueChange = { enteredAmount = it },
-                                    placeholder = { Text("Rs. 10000.00") },
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .height(48.dp),
-                                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                                    colors = OutlinedTextFieldDefaults.colors(
-                                        focusedBorderColor = Color.Gray,
-                                        unfocusedBorderColor = Color.Gray
-                                    ),
-                                    shape = RoundedCornerShape(8.dp),
-                                    trailingIcon = {
-                                        IconButton(onClick = { enteredAmount = "" }) {
-                                            Icon(
-                                                imageVector = Icons.Default.Close,
-                                                contentDescription = "Clear",
-                                                tint = Color.Gray,
-                                                modifier = Modifier.size(16.dp)
-                                            )
-                                        }
-                                    }
-                                )
+                OutlinedTextField(
+                    value = enteredAmount,
+                    onValueChange = { value -> enteredAmount = value },
+                    placeholder = { Text("Rs. 10000.00") },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(48.dp)
+                        .padding(horizontal = 8.dp),
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                    colors = OutlinedTextFieldDefaults.colors(
+                        focusedBorderColor = Color.Gray,
+                        unfocusedBorderColor = Color.Gray
+                    ),
+                    shape = RoundedCornerShape(8.dp),
+                    textStyle = LocalTextStyle.current.copy(fontSize = 18.sp, color = Color.Black),
+                    singleLine = true,
+                    trailingIcon = {
+                        IconButton(onClick = { enteredAmount = "" }) {
+                            Icon(
+                                imageVector = Icons.Default.Close,
+                                contentDescription = "Clear",
+                                tint = Color.Gray,
+                                modifier = Modifier.size(16.dp)
+                            )
+                        }
+                    }
+                )
                             }
 
                             Spacer(modifier = Modifier.weight(1f))

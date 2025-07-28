@@ -234,11 +234,10 @@ fun AddCustomerDialog(
                                             .background(Color(0xFFF0D923), CircleShape),
                                         contentAlignment = Alignment.Center
                                     ) {
-                                        Icon(
-                                            imageVector = Icons.Default.Person,
+                                        coil.compose.AsyncImage(
+                                            model = "https://i.ibb.co/9mp32M8x/bf37cd81b758a81616a8ee497903869b5cda4c7f.png",
                                             contentDescription = "NFC Character",
-                                            modifier = Modifier.size(60.dp),
-                                            tint = Color.Black
+                                            modifier = Modifier.size(60.dp)
                                         )
                                     }
                                     Spacer(modifier = Modifier.height(16.dp))
@@ -257,11 +256,10 @@ fun AddCustomerDialog(
                                             .background(Color(0xFFF0D923), CircleShape),
                                         contentAlignment = Alignment.Center
                                     ) {
-                                        Icon(
-                                            imageVector = Icons.Default.Person,
+                                        coil.compose.AsyncImage(
+                                            model = "https://i.ibb.co/9mp32M8x/bf37cd81b758a81616a8ee497903869b5cda4c7f.png",
                                             contentDescription = "RFID Character",
-                                            modifier = Modifier.size(60.dp),
-                                            tint = Color.Black
+                                            modifier = Modifier.size(60.dp)
                                         )
                                     }
                                     Spacer(modifier = Modifier.height(16.dp))

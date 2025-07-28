@@ -70,6 +70,7 @@ dependencies {
     implementation("androidx.compose.ui:ui-tooling-preview")
     implementation("androidx.compose.material3:material3")
     implementation("androidx.compose.material:material-icons-extended")  // For all Material icons
+    implementation("androidx.compose.ui:ui-text") // Required for KeyboardActions and text input
 
     // Navigation
     implementation("androidx.navigation:navigation-compose:2.7.6")

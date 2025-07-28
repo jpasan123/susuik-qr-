@@ -1,8 +1,8 @@
 package com.example.pos.ui.pos
 
-import android.Manifest
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -107,6 +107,12 @@ fun PosMainScreen(
             Product("14", "Sample Item NameSample Item Name", 2000.0, "https://images.pexels.com/photos/1633525/pexels-photo-1633525.jpeg"),
             Product("15", "Sample Item NameSample Item Name", 2000.0, "https://images.pexels.com/photos/1640777/pexels-photo-1640777.jpeg")
         )
+    }
+
+    // Filter products by search query
+    val filteredProducts = remember(searchQuery, products) {
+        if (searchQuery.isBlank()) products
+        else products.filter { it.name.contains(searchQuery, ignoreCase = true) }
     }
 
     // Camera permission launcher
@@ -305,7 +311,7 @@ fun PosMainScreen(
                     // Search bar
                     OutlinedTextField(
                         value = searchQuery,
-                        onValueChange = { searchQuery = it },
+                        onValueChange = { value -> searchQuery = value },
                         placeholder = {
                             Text(
                                 text = "Search...",
@@ -323,7 +329,10 @@ fun PosMainScreen(
                         },
                         modifier = Modifier
                             .width(280.dp)
-                            .height(40.dp),
+                            .height(40.dp)
+                            .padding(horizontal = 8.dp),
+                        textStyle = LocalTextStyle.current.copy(fontSize = 16.sp, color = Color.Black),
+                        singleLine = true,
                         colors = OutlinedTextFieldDefaults.colors(
                             focusedContainerColor = Color.White,
                             unfocusedContainerColor = Color.White,
@@ -402,15 +411,6 @@ fun PosMainScreen(
                             modifier = Modifier.size(16.dp)
                         )
                     }
-
-                    // Menu icon
-                    IconButton(onClick = { }) {
-                        Icon(
-                            imageVector = Icons.Default.MoreVert,
-                            contentDescription = "More",
-                            tint = Color.Black
-                        )
-                    }
                 }
             },
             colors = TopAppBarDefaults.topAppBarColors(
@@ -441,8 +441,7 @@ fun PosMainScreen(
                         if (customer == null) {
                             showAddCustomerDialog = true
                         } else {
-                            editingCustomer = customer
-                            showCustomerDialog = true
+                            showCustomerSelectionDialog = true
                         }
                     },
                     colors = ButtonDefaults.buttonColors(
@@ -467,7 +466,7 @@ fun PosMainScreen(
 
                 Button(
                     onClick = {
-                        cameraPermissionLauncher.launch(Manifest.permission.CAMERA)
+                        showQRScanner = true
                     },
                     colors = ButtonDefaults.buttonColors(
                         containerColor = Color.White,
@@ -489,56 +488,59 @@ fun PosMainScreen(
                     )
                 }
 
-                // Three dots icon for clear menu
-                Box {
-                    IconButton(
-                        onClick = { showClearMenu = !showClearMenu },
-                        modifier = Modifier.size(32.dp)
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.MoreVert,
-                            contentDescription = "More",
-                            tint = Color.Black
-                        )
-                    }
-                    if (showClearMenu) {
-                        Box(
-                            modifier = Modifier
-                                .padding(top = 36.dp, end = 0.dp)
-                                .background(Color.White, shape = RoundedCornerShape(8.dp))
-                                .border(1.dp, Color(0xFFE0E0E0), shape = RoundedCornerShape(8.dp))
+                // Three dots icon for clear menu (only show if cart is not empty)
+                if (cartItems.isNotEmpty()) {
+                    Box {
+                        IconButton(
+                            onClick = { showClearMenu = !showClearMenu },
+                            modifier = Modifier.size(32.dp)
                         ) {
-                            Row(
+                            Icon(
+                                imageVector = Icons.Default.MoreVert,
+                                contentDescription = "More",
+                                tint = Color.Black
+                            )
+                        }
+                        if (showClearMenu) {
+                            Box(
                                 modifier = Modifier
-                                    .padding(horizontal = 16.dp, vertical = 8.dp)
-                                    .clickable {
-                                        cartItems = emptyList()
-                                    }
-                                    .background(
-                                        Color(0xFFFFEBEE),
-                                        RoundedCornerShape(6.dp)
-                                    )
-                                    .border(
-                                        1.dp,
-                                        Color(0xFFE57373),
-                                        RoundedCornerShape(6.dp)
-                                    )
-                                    .padding(horizontal = 12.dp, vertical = 6.dp),
-                                horizontalArrangement = Arrangement.spacedBy(6.dp),
-                                verticalAlignment = Alignment.CenterVertically
+                                    .padding(top = 36.dp, end = 0.dp)
+                                    .background(Color.White, shape = RoundedCornerShape(8.dp))
+                                    .border(1.dp, Color(0xFFE0E0E0), shape = RoundedCornerShape(8.dp))
                             ) {
-                                Icon(
-                                    imageVector = Icons.Default.Delete,
-                                    contentDescription = "Clear All",
-                                    tint = Color(0xFFD32F2F),
-                                    modifier = Modifier.size(16.dp)
-                                )
-                                Text(
-                                    text = "Clear All Items",
-                                    color = Color(0xFFD32F2F),
-                                    fontSize = 12.sp,
-                                    fontWeight = FontWeight.Medium
-                                )
+                                Row(
+                                    modifier = Modifier
+                                        .padding(horizontal = 16.dp, vertical = 8.dp)
+                                        .clickable {
+                                            cartItems = emptyList()
+                                            showClearMenu = false
+                                        }
+                                        .background(
+                                            Color(0xFFFFEBEE),
+                                            RoundedCornerShape(6.dp)
+                                        )
+                                        .border(
+                                            1.dp,
+                                            Color(0xFFE57373),
+                                            RoundedCornerShape(6.dp)
+                                        )
+                                        .padding(horizontal = 12.dp, vertical = 6.dp),
+                                    horizontalArrangement = Arrangement.spacedBy(6.dp),
+                                    verticalAlignment = Alignment.CenterVertically
+                                ) {
+                                    Icon(
+                                        imageVector = Icons.Default.Delete,
+                                        contentDescription = "Clear All",
+                                        tint = Color(0xFFD32F2F),
+                                        modifier = Modifier.size(16.dp)
+                                    )
+                                    Text(
+                                        text = "Clear All Items",
+                                        color = Color(0xFFD32F2F),
+                                        fontSize = 12.sp,
+                                        fontWeight = FontWeight.Medium
+                                    )
+                                }
                             }
                         }
                     }
@@ -561,11 +563,27 @@ fun PosMainScreen(
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                items(products) { product ->
-                    ProductCard(
-                        product = product,
-                        onProductClick = { addToCart(product) }
-                    )
+                if (filteredProducts.isEmpty()) {
+                    item {
+                        Box(
+                            modifier = Modifier.fillMaxSize(),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Text(
+                                text = "No products found",
+                                color = Color.Gray,
+                                fontSize = 16.sp,
+                                textAlign = TextAlign.Center
+                            )
+                        }
+                    }
+                } else {
+                    items(filteredProducts) { product ->
+                        ProductCard(
+                            product = product,
+                            onProductClick = { addToCart(product) }
+                        )
+                    }
                 }
             }
 
@@ -729,7 +747,7 @@ fun PosMainScreen(
                         } else {
                             // Only show Proceed button if no customer
                             Button(
-                                onClick = { handleOrder() },
+                                onClick = { showPaymentScreen = true },
                                 modifier = Modifier.fillMaxWidth(),
                                 colors = ButtonDefaults.buttonColors(
                                     containerColor = Color(0xFFF0D923),
@@ -949,43 +967,55 @@ private fun ProductCard(
     Card(
         modifier = Modifier
             .aspectRatio(1f)
+            .size(160.dp)
             .clickable { onProductClick() },
         colors = CardDefaults.cardColors(containerColor = Color.White),
-        shape = RoundedCornerShape(8.dp)
+        shape = RoundedCornerShape(14.dp),
+        border = BorderStroke(2.dp, Color(0xFFE0E0E0))
     ) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(8.dp),
+                .padding(14.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            AsyncImage(
-                model = product.imageUrl,
-                contentDescription = product.name,
+            Box(
                 modifier = Modifier
-                    .size(60.dp)
-                    .clip(RoundedCornerShape(8.dp))
+                    .size(100.dp)
+                    .clip(RoundedCornerShape(14.dp))
+                    .background(Color(0xFFF0D923), RoundedCornerShape(14.dp))
+                    .border(2.dp, Color(0xFFE0E0E0), RoundedCornerShape(14.dp)),
+                contentAlignment = Alignment.Center
+            ) {
+                AsyncImage(
+                    model = product.imageUrl,
+                    contentDescription = product.name,
+                    modifier = Modifier
+                        .size(80.dp)
+                        .clip(RoundedCornerShape(12.dp))
+                )
+            }
+
+            Spacer(modifier = Modifier.height(12.dp))
+
+            Text(
+                text = product.name,
+                fontSize = 13.sp,
+                textAlign = TextAlign.Center,
+                maxLines = 2,
+                overflow = TextOverflow.Ellipsis,
+                modifier = Modifier.fillMaxWidth()
             )
 
             Spacer(modifier = Modifier.height(8.dp))
 
             Text(
-                text = product.name,
-                fontSize = 10.sp,
-                textAlign = TextAlign.Center,
-                maxLines = 2,
-                overflow = TextOverflow.Ellipsis,
-                modifier = Modifier.weight(1f)
-            )
-
-            Spacer(modifier = Modifier.height(4.dp))
-
-            Text(
                 text = "Rs.${String.format("%.2f", product.price)}",
-                fontSize = 10.sp,
+                fontSize = 12.sp,
                 fontWeight = FontWeight.Bold,
                 color = Color.Black,
-                textAlign = TextAlign.Center
+                textAlign = TextAlign.Center,
+                modifier = Modifier.fillMaxWidth()
             )
         }
     }

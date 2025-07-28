@@ -32,6 +32,7 @@ fun CustomerSelectionDialog(
     onCustomerSelected: (Customer) -> Unit
 ) {
     var searchQuery by remember { mutableStateOf("") }
+    var selectedCustomer by remember { mutableStateOf<CustomerSearchResult?>(null) }
 
     // Dummy customer data
     val allCustomers = remember {
@@ -188,42 +189,46 @@ fun CustomerSelectionDialog(
                                 .fillMaxHeight()
                                 .padding(start = 16.dp)
                         ) {
-                            // Search bar
+                            // Search bar with send button
                             Row(
-                                modifier = Modifier.fillMaxWidth(),
-                                horizontalArrangement = Arrangement.spacedBy(8.dp),
                                 verticalAlignment = Alignment.CenterVertically
                             ) {
                                 OutlinedTextField(
                                     value = searchQuery,
-                                    onValueChange = { searchQuery = it },
-                                    placeholder = { Text("Sushil", color = Color.Gray) },
+                                    onValueChange = {
+                                        searchQuery = it
+                                        selectedCustomer = null
+                                    },
+                                    placeholder = { Text("Search customer") },
                                     modifier = Modifier.weight(1f),
-                                    colors = OutlinedTextFieldDefaults.colors(
-                                        focusedBorderColor = Color.Gray,
-                                        unfocusedBorderColor = Color.Gray,
-                                        focusedContainerColor = Color.White,
-                                        unfocusedContainerColor = Color.White
-                                    ),
-                                    shape = RoundedCornerShape(8.dp)
-                                )
-
-                                Button(
-                                    onClick = { /* Search action */ },
-                                    colors = ButtonDefaults.buttonColors(
-                                        containerColor = Color(0xFFF0D923),
-                                        contentColor = Color.Black
-                                    ),
+                                    singleLine = true,
                                     shape = RoundedCornerShape(8.dp),
-                                    modifier = Modifier.size(48.dp),
-                                    contentPadding = PaddingValues(0.dp)
-                                ) {
-                                    Icon(
-                                        imageVector = Icons.Default.Search,
-                                        contentDescription = "Search",
-                                        modifier = Modifier.size(20.dp)
-                                    )
-                                }
+                                    trailingIcon = {
+                                        IconButton(
+                                            onClick = {
+                                                // Only add if a customer is selected
+                                                val customerToAdd = selectedCustomer ?: filteredCustomers.firstOrNull { it.name == searchQuery }
+                                                if (customerToAdd != null) {
+                                                    onCustomerSelected(
+                                                        Customer(
+                                                            customerToAdd.id,
+                                                            customerToAdd.name,
+                                                            "",
+                                                            customerToAdd.email
+                                                        )
+                                                    )
+                                                }
+                                            },
+                                            enabled = selectedCustomer != null || filteredCustomers.any { it.name == searchQuery }
+                                        ) {
+                                            Icon(
+                                                imageVector = Icons.Default.Send,
+                                                contentDescription = "Send",
+                                                tint = Color(0xFFF0D923)
+                                            )
+                                        }
+                                    }
+                                )
                             }
 
                             Spacer(modifier = Modifier.height(16.dp))
@@ -233,19 +238,46 @@ fun CustomerSelectionDialog(
                                 verticalArrangement = Arrangement.spacedBy(8.dp)
                             ) {
                                 items(filteredCustomers) { customer ->
-                                    CustomerResultItem(
-                                        customer = customer,
-                                        onClick = {
-                                            val selectedCustomer = Customer(
-                                                id = customer.id,
-                                                name = customer.name,
-                                                email = customer.email,
-                                                phone = ""
+                                    Row(
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .clickable {
+                                                selectedCustomer = customer
+                                                searchQuery = customer.name
+                                            }
+                                            .padding(vertical = 8.dp, horizontal = 4.dp),
+                                        verticalAlignment = Alignment.CenterVertically,
+                                        horizontalArrangement = Arrangement.spacedBy(12.dp)
+                                    ) {
+                                        Icon(
+                                            imageVector = Icons.Default.Person,
+                                            contentDescription = "Customer",
+                                            modifier = Modifier.size(24.dp),
+                                            tint = Color.Gray
+                                        )
+                                        Column {
+                                            Text(
+                                                text = customer.name,
+                                                fontSize = 14.sp,
+                                                fontWeight = FontWeight.Medium,
+                                                color = Color.Black
                                             )
-                                            onCustomerSelected(selectedCustomer)
-                                            onDismiss()
+                                            Text(
+                                                text = customer.email,
+                                                fontSize = 12.sp,
+                                                color = Color.Gray
+                                            )
                                         }
-                                    )
+                                        Spacer(modifier = Modifier.weight(1f))
+                                        if (selectedCustomer?.id == customer.id) {
+                                            Icon(
+                                                imageVector = Icons.Default.CheckCircle,
+                                                contentDescription = "Selected",
+                                                tint = Color(0xFFF0D923),
+                                                modifier = Modifier.size(20.dp)
+                                            )
+                                        }
+                                    }
                                 }
                             }
                         }

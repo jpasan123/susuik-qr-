@@ -103,7 +103,7 @@ fun PosScreen(
                             )
                         },
                         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                        modifier = Modifier.width(200.dp),
+                        modifier = Modifier.width(300.dp),
                         colors = OutlinedTextFieldDefaults.colors(
                             focusedBorderColor = Color(0xFF2196F3),
                             unfocusedBorderColor = Color.Gray,
@@ -126,7 +126,7 @@ fun PosScreen(
                         }
                     },
                     modifier = Modifier
-                        .width(200.dp)
+                        .width(300.dp)
                         .height(48.dp),
                     shape = RoundedCornerShape(8.dp),
                     colors = ButtonDefaults.buttonColors(
@@ -144,58 +144,58 @@ fun PosScreen(
             }
         }
 
-        // Bottom Navigation
-        BottomNavigation()
+//        // Bottom Navigation
+//        BottomNavigation()
     }
 }
 
 // ... BottomNavigation and BottomNavItem composables remain the same ...
 
-@Composable
-private fun BottomNavigation() {
-    Card(
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(80.dp),
-        shape = RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp),
-        colors = CardDefaults.cardColors(containerColor = Color.White),
-        elevation = CardDefaults.cardElevation(defaultElevation = 8.dp)
-    ) {
-        Row(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(horizontal = 16.dp),  // Removed the misplaced onStartSession() call
-            horizontalArrangement = Arrangement.SpaceEvenly,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            BottomNavItem(
-                icon = Icons.Default.QrCode,
-                label = "Scan",
-                isSelected = false
-            )
-            BottomNavItem(
-                icon = Icons.Default.Description,
-                label = "KOT",
-                isSelected = false
-            )
-            BottomNavItem(
-                icon = Icons.Default.LocalOffer,
-                label = "Coupons",
-                isSelected = false
-            )
-            BottomNavItem(
-                icon = Icons.Default.CloudOff,
-                label = "Offline",
-                isSelected = false
-            )
-            BottomNavItem(
-                icon = Icons.Default.Store,
-                label = "POS",
-                isSelected = true
-            )
-        }
-    }
-}
+//@Composable
+//private fun BottomNavigation() {
+//    Card(
+//        modifier = Modifier
+//            .fillMaxWidth()
+//            .height(80.dp),
+//        shape = RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp),
+//        colors = CardDefaults.cardColors(containerColor = Color.White),
+//        elevation = CardDefaults.cardElevation(defaultElevation = 8.dp)
+//    ) {
+//        Row(
+//            modifier = Modifier
+//                .fillMaxSize()
+//                .padding(horizontal = 16.dp),  // Removed the misplaced onStartSession() call
+//            horizontalArrangement = Arrangement.SpaceEvenly,
+//            verticalAlignment = Alignment.CenterVertically
+//        ) {
+//            BottomNavItem(
+//                icon = Icons.Default.QrCode,
+//                label = "Scan",
+//                isSelected = false
+//            )
+//            BottomNavItem(
+//                icon = Icons.Default.Description,
+//                label = "KOT",
+//                isSelected = false
+//            )
+//            BottomNavItem(
+//                icon = Icons.Default.LocalOffer,
+//                label = "Coupons",
+//                isSelected = false
+//            )
+//            BottomNavItem(
+//                icon = Icons.Default.CloudOff,
+//                label = "Offline",
+//                isSelected = false
+//            )
+//            BottomNavItem(
+//                icon = Icons.Default.Store,
+//                label = "POS",
+//                isSelected = true
+//            )
+//        }
+//    }
+//}
 @Composable
 private fun BottomNavItem(
     icon: ImageVector,
